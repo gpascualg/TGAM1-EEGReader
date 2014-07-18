@@ -11,14 +11,20 @@ enum Pins
 
 enum Baudrate
 {
-    BAUD_NORMAL     = 9600,
     BAUD_SLOW       = 1200,
+    BAUD_NORMAL     = 9600,
     BAUD_COMMANDS   = 38400,
     BAUD_FAST       = 57600
 };
 
 #include "Brain.h"
-#include "HC.h"
-#include "TGAM.h"
+
+#if defined(USING_HC05) || defined (USING_HC06)
+	#include "HC.h"
+#endif
+
+#if defined(USING_TGAM16) || defined(USING_TGAM17)
+	#include "TGAM.h"
+#endif
 
 #endif

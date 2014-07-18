@@ -1,21 +1,33 @@
-#define USING_TGAM17
+#define USING_TGAM16
 #include "TGAM.h"
 
 namespace TGAM
 {
     
-    namespace TGAM17
+    namespace TGAM16
     {
 
+        
         int Setup(AbstractSerial* stream, Config config, Baudrate initialBaudrate, Baudrate targetBaudrate)
         {
-            // Default TGAM 2.8 baudrate is 9600, start it
+            if (config == CONFIG_FFT)
+            {
+                // TGAM firmware 1.6 does not have FFT mode
+                return -1;
+            }
+
+            // Default TGAM 2.3 baudrate is 9600, start it
             stream->begin((long)initialBaudrate);
             // while(!Serial) // Might be necessary for some arduino boards
 
-            // First off, we must send the baudrate change command
-            // 00000010 (0x02): 57.6k baud, normal+raw output mode
-            stream->print((uint8_t)config);
+
+            // Page 0
+            // [0] = attention
+            // [1] = meditation
+            // [2] = raw
+            // [3] = 57.6k/9600
+            uint8_t mode = 0x3 | (config == CONFIG_RAW ? 0x0C : 0x00); // If RAW mode, set to 0x3 | 0x4 | 0x8 = 0x3 | 0xC
+            stream->print(mode);
             delay(1000);
 
             // HACK: We should now wait for a complete packet to be received,
@@ -26,21 +38,13 @@ namespace TGAM
             // while(!Serial) // Might be necessary for some arduino boards
 
             // We now can send which raw information we want
-            // Page 1 (0001 << 8) | (0011)
-            stream->print(0x13);
+            // Page 1
+            // [0] EEG Power
+            // [1] RAW
+            mode = 0x11 | (config == CONFIG_RAW ? 0x02 : 0x00);
+            stream->print(mode);
             delay(1000);
 
-            // Measuraments
-            // Page 2 (0010 << 8) | (0011)
-            stream->print(0x23);
-            delay(1000);
-
-            // eSense
-            // Page 3 (0011 << 8) | (0011)
-            stream->print(0x33);
-            delay(1000);
-
-            // Baud (page 6) will not be modified as it has already been done		
             return 0;
         }
 
