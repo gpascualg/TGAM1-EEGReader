@@ -53,6 +53,8 @@ If no errors pop, you are done.
 ##Finishing - Move library
 Move EEGReader folder to your arduino library folder, as it is a library.
 
+**Edit ``EEGReader/EEGReader.h`` file to set up the correct PIN ports!**
+
 Use Brain_Receiver and Brain_Transmitter to program your arduinos and start playing around.
 
 
