@@ -17,7 +17,7 @@
 #elif defined(USING_TGAM17)
     #define TGAM_NAMESPACE TGAM17
 #else
-    #define TGAM_ENUMS
+    #define TGAM_ENUMS_ONLY
 #endif
 
 #include "Arduino.h"
@@ -38,19 +38,8 @@ namespace TGAM
        CONFIG_FFT      = 0x03, // Outputs FFT data at BAUDRATE_FAST
     };
 
-#ifndef TGAM_ENUMS
+#ifndef TGAM_ENUMS_ONLY
 
-    /**
-     * Sets up the TGAM module given a Serial (either Software or Hardware) connection to
-     * it, the requiered configuration, an initial baudrate at which to communicate and a targetBaudrate
-     * to stablish.
-     *
-     * @param stream Serial communication
-     * @param config TGAM config mode
-     * @param initialBaudrate Baudrate at which to connect at first
-     * @param targetBaudrate Baudrate to set the TGAM to
-     * @return If successful 0, -1 if config mode is not supported by TGAM
-     */
     namespace TGAM16 __attribute__((visibility(hidden)))
     {    
         int Setup(AbstractSerial* stream, Config config, Baudrate initialBaudrate, Baudrate targetBaudrate);

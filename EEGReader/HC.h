@@ -14,7 +14,7 @@
 #elif defined(USING_HC06)
     #define HC_NAMESPACE HC06
 #else
-    #define HC_ENUMS
+    #define HC_ENUMS_ONLY
 #endif
 
 #include "Arduino.h"
@@ -45,14 +45,14 @@ namespace HC
         UNSUPPORTED     = 2
     };
 
-#ifndef HC_ENUMS
+#ifndef HC_ENUMS_ONLY
 
-    namespace HC05
+    namespace HC05 __attribute__((visibility(hidden)))
     {
         void Setup(AbstractSerial* bluetooth, Role role, Baudrate baudrate);
     }
 
-    namespace HC06
+    namespace HC06 __attribute__((visibility(hidden)))
     {
         void Setup(AbstractSerial* bluetooth, Role role, Baudrate baudrate);
     }

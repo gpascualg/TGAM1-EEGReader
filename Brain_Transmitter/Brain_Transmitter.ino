@@ -6,16 +6,16 @@
 #include <EEGReader.h>
 
 SoftwareSerial bluetooth(PIN_RX, PIN_TX);
-Brain brain(bluetooth);
+Brain brain(Serial);
 
 void setup() 
 {
     // Setup TGAM module
-    TGAM::Setup(&bluetooth, TGAM::CONFIG_RAW, BAUD_FAST);
+    TGAM::Setup(&Serial, TGAM::CONFIG_RAW, BAUD_FAST);
 
     // Setup bt module
     // We will communicate at a RAW EEG baudrate, even if we are at normal mode
-    HC::Setup(&Serial, HC::ROLE_SLAVE, BAUD_FAST);
+    HC::Setup(&bluetooth, HC::ROLE_SLAVE, BAUD_FAST);
 }
 
 
