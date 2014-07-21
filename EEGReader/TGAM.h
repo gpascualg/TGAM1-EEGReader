@@ -30,12 +30,40 @@ namespace TGAM
     /**
      * TGAM's possible work modes
      */
-    enum Config
+    enum ConfigMode
     {
        CONFIG_DEFAULT  = 0x00, // Outputs normal data at BAUDRATE_NORMAL
        CONFIG_SLOW     = 0x01, // Outputs normal data at BAUDRATE_SLOW
        CONFIG_RAW      = 0x02, // Outputs normal and RAW data at BAUDRATE_FAST
        CONFIG_FFT      = 0x03, // Outputs FFT data at BAUDRATE_FAST
+    };
+
+    struct Config
+    {
+        ConfigMode configMode;
+        bool quality;
+        bool attention;
+        bool meditation;
+        bool eegPowers;
+
+        Config(ConfigMode _configMode, bool _quality, bool _attention, bool _meditation, bool _eegPowers):
+            configMode(_configMode),
+            quality(_quality),
+            attention(_attention),
+            meditation(_meditation),
+            eegPowers(_eegPowers)
+        {
+        }
+
+        Config(ConfigMode configMode)
+        {
+            Config(configMode, true, true, true, true);
+        }
+
+        Config()
+        {
+            Config(CONFIG_DEFAULT, true, true, true, true);
+        }
     };
 
 #ifndef TGAM_ENUMS_ONLY
@@ -57,13 +85,30 @@ namespace TGAM
      * Default TGAM baudrate is BAUDRATE_NORMAL
      *
      * @param stream Serial communication
-     * @param config TGAM config mode
+     * @param config TGAM configuration
      * @param targetBaudrate Baudrate to set the TGAM to
      * @return If successful 0, -1 if config mode is not supported by TGAM
      */
     inline int Setup(AbstractSerial* stream, Config config, Baudrate targetBaudrate)
     {
         return TGAM_NAMESPACE::Setup(stream, config, BAUD_NORMAL, targetBaudrate);
+    }
+
+
+    /**
+     * Sets up the TGAM module given a Serial (either Software or Hardware) connection to
+     * it, the requiered configuration and a targetBaudrate
+     * to stablish.
+     * Default TGAM baudrate is BAUDRATE_NORMAL
+     *
+     * @param stream Serial communication
+     * @param configMode TGAM config mode
+     * @param targetBaudrate Baudrate to set the TGAM to
+     * @return If successful 0, -1 if config mode is not supported by TGAM
+     */
+    inline int Setup(AbstractSerial* stream, ConfigMode configMode, Baudrate targetBaudrate)
+    {
+        return TGAM_NAMESPACE::Setup(stream, Config(configMode), BAUD_NORMAL, targetBaudrate);
     }
 
     /**
@@ -74,22 +119,22 @@ namespace TGAM
      * Target baudrate is deducted from the config parameter
      *
      * @param stream Serial communication
-     * @param config TGAM config mode
+     * @param configMode TGAM config mode
      * @return If successful 0, -1 if config mode is not supported by TGAM
      */
-    inline int Setup(AbstractSerial* stream, Config config)
+    inline int Setup(AbstractSerial* stream, ConfigMode configMode)
     {
-        switch (config)
+        switch (configMode)
         {
             case CONFIG_DEFAULT:
-                return Setup(stream, config, BAUD_NORMAL);
+                return Setup(stream, configMode, BAUD_NORMAL);
 
             case CONFIG_SLOW:
-                return Setup(stream, config, BAUD_SLOW);
+                return Setup(stream, configMode, BAUD_SLOW);
 
             case CONFIG_RAW:
             case CONFIG_FFT:
-                return Setup(stream, config, BAUD_FAST);
+                return Setup(stream, configMode, BAUD_FAST);
         }
 
         return -1;

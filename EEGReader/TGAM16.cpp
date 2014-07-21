@@ -10,7 +10,7 @@ namespace TGAM
         
         int Setup(AbstractSerial* stream, Config config, Baudrate initialBaudrate, Baudrate targetBaudrate)
         {
-            if (config == CONFIG_FFT)
+            if (config.configMode == CONFIG_FFT)
             {
                 // TGAM firmware 1.6 does not have FFT mode
                 return -1;
@@ -26,7 +26,9 @@ namespace TGAM
             // [1] = meditation
             // [2] = raw
             // [3] = 57.6k/9600
-            uint8_t mode = 0x3 | (config == CONFIG_RAW ? 0x0C : 0x00); // If RAW mode, set to 0x3 | 0x4 | 0x8 = 0x3 | 0xC
+            uint8_t mode = (config.attention ? 0x01 : 0x00) |
+                            (config.meditation ? 0x02 : 0x00) |
+                            (config.configMode == CONFIG_RAW ? 0x0C : 0x00); // If RAW mode, set to 0x3 | 0x4 | 0x8 = 0x3 | 0xC
             stream->print(mode);
             delay(1000);
 
@@ -40,8 +42,8 @@ namespace TGAM
             // We now can send which raw information we want
             // Page 1
             // [0] EEG Power
-            // [1] RAW
-            mode = 0x11 | (config == CONFIG_RAW ? 0x02 : 0x00);
+            // [1] RAW 10/8 (ENABLED)
+            mode = 0x12 | (config.eegPowers ? 0x01 : 0x00);
             stream->print(mode);
             delay(1000);
 

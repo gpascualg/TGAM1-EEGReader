@@ -46,6 +46,10 @@ boolean Brain::update()
                 {
                     ++state;
                 }
+                else
+                {
+                    state = STATE_SYNC_1;
+                }
                 break;
 
             case STATE_PLENGTH:
@@ -68,7 +72,7 @@ boolean Brain::update()
                     // If data is larger than max allowed
                     else if (packetLength > MAX_PAYLOAD_LENGTH)
                     {
-                        sprintf(latestError, "ERROR: Packet too long %i", packetLength);
+                        lastError = ERROR_BRAIN_PACKET_LENGTH;
                         state = STATE_SYNC_1;
                     }
                 }
@@ -88,7 +92,7 @@ boolean Brain::update()
             case STATE_CHKSUM:
                 if (~checksumAccumulator != readByte)
                 {
-                    sprintf(latestError, "ERROR: Checksum");
+                    lastError = ERROR_BRAIN_PACKET_CHECKSUM;
                 }
                 else
                 {
@@ -96,7 +100,7 @@ boolean Brain::update()
                     hasPacket = parsePacket();
                     if (!hasPacket)
                     {
-                        sprintf(latestError, "ERROR: Parsing error");
+                        lastError = ERROR_BRAIN_PARSING;
                     }
                 }
 
@@ -105,7 +109,7 @@ boolean Brain::update()
 
             default:
                 // We should never get here
-                sprintf(latestError, "ERROR: Unexpected state");
+                lastError = ERROR_BRAIN_UNKNOWN_STATE;
                 clear();
                 break;
         }
@@ -170,7 +174,7 @@ boolean Brain::parsePacket() {
                 expected = packetData[++i]; // It should be 2
                 if (expected > 2)
                 {
-                    sprintf(latestError, "ERROR: Unexpected 0x80 %d", expected);
+                    lastError = ERROR_BRAIN_UNEXPECTED_80;
                     i += (expected - 2);
                 }
 
@@ -181,7 +185,7 @@ boolean Brain::parsePacket() {
                 expected = packetData[++i]; // It should be 32
                 if (expected > 32)
                 {
-                    sprintf(latestError, "ERROR: Unexpected 0x81 %d", expected);
+                    lastError = ERROR_BRAIN_UNEXPECTED_81;
                     i += (expected - 32);
                 }
 
@@ -199,7 +203,7 @@ boolean Brain::parsePacket() {
                 expected = packetData[++i]; // It should be 24
                 if (expected > 24)
                 {
-                    sprintf(latestError, "ERROR: Unexpected 0x83 %d", expected);
+                    lastError = ERROR_BRAIN_UNEXPECTED_83;
                     i += (expected - 24);
                 }
 
@@ -252,10 +256,6 @@ void Brain::printCSV() {
     }
  
     brainStream->println("");
-}
-
-char* Brain::readErrors() {
-    return latestError;
 }
 
 char* Brain::readCSV() {

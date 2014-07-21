@@ -16,6 +16,15 @@ enum BrainState
     STATE_CHKSUM
 };
 
+#define ERROR_BRAIN_PACKET_LENGTH       0x01
+#define ERROR_BRAIN_PACKET_CHECKSUM     0x02
+#define ERROR_BRAIN_PARSING             0x03
+#define ERROR_BRAIN_UNKNOWN_STATE       0x04
+#define ERROR_BRAIN_UNEXPECTED_80       0x05
+#define ERROR_BRAIN_UNEXPECTED_81       0x06
+#define ERROR_BRAIN_UNEXPECTED_83       0x07
+
+
 class Brain
 {
 public:
@@ -24,8 +33,8 @@ public:
     // Run this in the main loop.
     boolean update();
 
-    // String with most recent error.
-    char* readErrors();
+    // Most recent error.
+    inline uint8_t getLastError();
 
     // Returns comme-delimited string of all available brain data.
     // Sequence is as below.
@@ -35,6 +44,7 @@ public:
     uint8_t readSignalQuality();
     uint8_t readAttention();
     uint8_t readMeditation();
+    inline int readRaw();
     uint32_t* readPowerArray();
     uint32_t readDelta();
     uint32_t readTheta();
@@ -75,10 +85,7 @@ private:
     // 100 characters       
     char csvBuffer[100];
     
-    // Longest error is
-    // 26 x 1 char uint8_ts
-    // 1 x 1 char 0 (string termination)
-    char latestError[27];       
+    uint8_t lastError;
     
     uint8_t signalQuality;
     uint8_t attention;
@@ -90,6 +97,16 @@ private:
     // Lighter to just make this public, instead of using the getter?
     uint32_t eegPower[EEG_POWER_BANDS];
 };
+
+uint8_t Brain::getLastError()
+{
+    return lastError;
+}
+
+int Brain::readRaw()
+{
+    return rawValue;
+}
 
 void Brain::clear()
 {

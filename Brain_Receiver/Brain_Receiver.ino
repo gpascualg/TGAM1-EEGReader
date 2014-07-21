@@ -17,14 +17,60 @@ void setup()
 }
 
 
+#define PACKET_SYNC_1   1
+#define PACKET_SYNC_2   2
+#define PACKET_ERRORS   3
+#define PACKET_RAW_1    4
+#define PACKET_RAW_2    5
+
+uint8_t parsingStep = PACKET_SYNC_1;
+int rawEEG = 0;
+
 void loop()
 {
     while (1)
     {
         if (bluetooth.available())
         {
-            // Read byte from bluetooth and print on serial
-            Serial.write(bluetooth.read());
+            uint8_t data = bluetooth.read();
+
+            switch (parsingStep)
+            {
+                case PACKET_SYNC_1:
+                case PACKET_SYNC_2:
+                    if (data == 0xFF)
+                    {
+                        ++parsingStep;
+                    }
+                    else
+                    {
+                        parsingStep = PACKET_SYNC_1;
+                    }
+                    break;
+
+                case PACKET_ERRORS:
+                    Serial.write("Last error: ");
+                    Serial.write(data);
+                    ++parsingStep;
+                    break;
+
+                case PACKET_RAW_1:
+                    rawEEG = (int)(data) << 8;
+                    ++parsingStep;
+                    break;
+
+                case PACKET_RAW_2:
+                    rawEEG |= data;
+                    Serial.print("Raw EEG value: ");
+                    Serial.print(rawEEG);
+
+                    parsingStep = PACKET_SYNC_1;
+                    break;
+
+                default:
+                    parsingStep = PACKET_SYNC_1;
+                    break;
+            }
         }
     }
 }

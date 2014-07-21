@@ -11,7 +11,7 @@ Brain brain(Serial);
 void setup() 
 {
     // Setup TGAM module
-    TGAM::Setup(&Serial, TGAM::CONFIG_RAW, BAUD_FAST);
+    TGAM::Setup(&Serial, TGAM::Config(TGAM::CONFIG_RAW, false, false, false, false), BAUD_FAST);
 
     // Setup bt module
     // We will communicate at a RAW EEG baudrate, even if we are at normal mode
@@ -25,10 +25,14 @@ void loop()
     {
         if (brain.update())
         {
-            // Send packet via bluetooh
-            // TODO: This must be better handled
-            bluetooth.write(brain.readCSV());
-            bluetooth.write('\n');
+            // Transmission start
+            bluetooth.write(0xFF);
+            bluetooth.write(0xFF);
+
+            // Send error (1 byte) + Raw (2 bytes)
+            bluetooth.write(brain.getLastError());
+            bluetooth.write((uint8_t)((brain.readRaw() >> 8) & 0xFF));
+            bluetooth.write((uint8_t)(brain.readRaw() & 0xFF));
         }
     }
 }
