@@ -76,9 +76,9 @@ private:
     char csvBuffer[100];
     
     // Longest error is
-    // 22 x 1 char uint8_ts
+    // 26 x 1 char uint8_ts
     // 1 x 1 char 0 (string termination)
-    char latestError[23];       
+    char latestError[27];       
     
     uint8_t signalQuality;
     uint8_t attention;
