@@ -17,7 +17,9 @@ enum Baudrate
     BAUD_FAST       = 57600
 };
 
-#include "Brain.h"
+#if defined(USING_PARSER)
+    #include "ThinkGearStreamParser.h"
+#endif
 
 #if defined(USING_HC05) || defined (USING_HC06)
 	#include "HC.h"
