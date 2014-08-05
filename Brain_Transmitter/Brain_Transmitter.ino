@@ -29,6 +29,17 @@ void dataHandler(unsigned char extendedCodeLevel, unsigned char code, unsigned c
             --numBytes;
         }
     }
+    else
+    {
+      // Transmission start
+        bluetooth.write(0xFF);
+        bluetooth.write(0xFF);
+
+        // Send number of bytes
+        bluetooth.write(numBytes);
+        bluetooth.write(extendedCodeLevel);
+        bluetooth.write(code);
+    }    
 }
 
 void setup() 
@@ -46,11 +57,8 @@ void setup()
 
 void loop()
 {
-    while (1)
+    if (Serial.available())
     {
-        if (Serial.available())
-        {
-            THINKGEAR_parseByte(&parser, Serial.read());
-        }
+        THINKGEAR_parseByte(&parser, Serial.read());
     }
 }

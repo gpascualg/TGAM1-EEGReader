@@ -8,10 +8,11 @@ namespace HC
         // Send all pending data
         bluetooth->flush();
         delay(500);
+		bluetooth->end();
 
-        // Power off and on, delaying 2s
+        // Power off and on, delaying 1/2s
         digitalWrite(PIN_POWER, LOW);
-        delay(2000);
+        delay(500);
         digitalWrite(PIN_POWER, HIGH);
     }
 
@@ -19,7 +20,7 @@ namespace HC
     {
         digitalWrite(PIN_KEY, mode == MODE_WORK ? LOW : HIGH);
         Reset(bluetooth);
-        bluetooth->begin((int)baudrate);
+        bluetooth->begin((unsigned long)baudrate);
     }
 
 }

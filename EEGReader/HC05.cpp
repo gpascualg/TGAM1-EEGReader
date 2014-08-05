@@ -14,30 +14,29 @@ namespace HC
                 role = ROLE_SLAVE;
             }
 
-            // Start with no power to the bt module
-            pinMode(PIN_POWER, OUTPUT);
-            digitalWrite(PIN_POWER, LOW);
-
             // Start with KEY pin at low
             pinMode(PIN_KEY, OUTPUT);
 
+            // Start with no power to the bt module
+            pinMode(PIN_POWER, OUTPUT);
+			
             // Setup it to accept commands (baudrate should be that of the commands)
             HC::Mode(bluetooth, MODE_COMMANDS, BAUD_COMMANDS);
-
+			
             // Acknowledge we are here
-            bluetooth->print("AT\r\n");
-            delay(1000);
+            bluetooth->write("AT\r\n");
+			delay(1000);
+			
+			char buffer[30] = {0};
 
             // Setup UART mode (baudrate, stop bit, parity)
-            bluetooth->print("AT+UART=");
-            bluetooth->print((long)baudrate);
-            bluetooth->print(",0,0\r\n");
+			sprintf(buffer, "AT+UART=%u,0,0\r\n", baudrate);
+			bluetooth->write(buffer);
             delay(1000);
 
             // We are the slave
-            bluetooth->print("AT+ROLE=");
-            bluetooth->print((uint8_t)role);
-            bluetooth->print("\r\n");
+			sprintf(buffer, "AT+ROLE=%d\r\n", role);
+			bluetooth->write(buffer);
             delay(1000);
 
             // Let's switch back to work mode
