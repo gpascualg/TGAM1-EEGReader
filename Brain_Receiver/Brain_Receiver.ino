@@ -31,16 +31,15 @@ void loop()
     if (bluetooth.available())
     {
         uint8_t data = bluetooth.read();
-        Serial.write("R:");
-        Serial.write(data);
         
         switch (parsingStep)
         {
             case PACKET_SYNC_1:
             case PACKET_SYNC_2:
-                if (data == 0xFF)
+                if (data == 0xFA)
                 {
                     ++parsingStep;
+                    Serial.write("\n");
                 }
                 else
                 {
@@ -50,7 +49,7 @@ void loop()
 
             case PACKET_ERRORS:
                 Serial.write("Num. bytes: ");
-                Serial.write(data);
+                Serial.print(data);
                 ++parsingStep;
                 break;
 

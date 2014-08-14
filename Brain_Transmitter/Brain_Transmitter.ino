@@ -15,8 +15,8 @@ void dataHandler(unsigned char extendedCodeLevel, unsigned char code, unsigned c
     if (extendedCodeLevel == 0 && code == 0x80)
     {        
         // Transmission start
-        bluetooth.write(0xFF);
-        bluetooth.write(0xFF);
+        bluetooth.write(0xFA);
+        bluetooth.write(0xFA);
 
         // Send number of bytes
         bluetooth.write(numBytes);
@@ -29,24 +29,14 @@ void dataHandler(unsigned char extendedCodeLevel, unsigned char code, unsigned c
             --numBytes;
         }
     }
-    else
-    {
-      // Transmission start
-        bluetooth.write(0xFF);
-        bluetooth.write(0xFF);
-
-        // Send number of bytes
-        bluetooth.write(numBytes);
-        bluetooth.write(extendedCodeLevel);
-        bluetooth.write(code);
-    }    
 }
 
 void setup() 
 {
     // Setup TGAM module
     TGAM::Setup(&Serial, TGAM::Config(TGAM::CONFIG_RAW, false, false, false, false), BAUD_FAST);
-
+    //Serial.begin((unsigned long)BAUD_NORMAL);
+    
     // Setup bt module
     // We will communicate at a RAW EEG baudrate, even if we are at normal mode
     HC::Setup(&bluetooth, HC::ROLE_SLAVE, BAUD_FAST);
