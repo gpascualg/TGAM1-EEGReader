@@ -6,6 +6,10 @@
 #define USING_PARSER
 #include <EEGReader.h>
 
+// Application defines
+//#define BLUETOOTH_CONFIGURATION
+
+// Variables and objects
 SoftwareSerial bluetooth(PIN_RX, PIN_TX);
 ThinkGearStreamParser parser;
 
@@ -51,7 +55,7 @@ void setup()
     HC::Setup(&bluetooth, HC::ROLE_SLAVE, BAUD_FAST);
 
     // Initialize the parser
-    THINKGEAR_initParser(&parser, PARSER_TYPE_PACKETS, dataHandler, NULL );
+    THINKGEAR_initParser(&parser, PARSER_TYPE_PACKETS, dataHandler, NULL);
 }
 
 void loop()
@@ -60,5 +64,15 @@ void loop()
     {
         THINKGEAR_parseByte(&parser, Serial.read());
     }
+
+#ifdef BLUETOOTH_CONFIGURATION
+
+    if (bluetooth.available())
+    {
+        TGAM::SetupEx(&Serial, TGAM::Config((TGAM::ConfigMode)bluetooth.read()), BAUD_FAST);
+        THINKGEAR_initParser(&parser, PARSER_TYPE_PACKETS, dataHandler, NULL);
+    }
+    
+#endif
 }
 

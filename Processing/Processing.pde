@@ -33,30 +33,12 @@ void serialEvent (Serial myPort) {
   switch (parsingStep)
   {
       case 1:
-      case 2:
-      case 3:
-          if (data == 0xFA + (parsingStep - 1))
-          {
-              ++parsingStep;
-          }
-          else
-          {
-              parsingStep = 1;
-          }
-          break;
-  
-      case 4:
-          ++parsingStep;
-          break;
-  
-      case 5:
           rawEEG = (short)(data << 8);
           ++parsingStep;
           break;
   
-      case 6:
+      case 2:
           rawEEG |= (short)data;
-          ++parsingStep;
           println(rawEEG);
           float eeg = map(rawEEG, -2048*2, 2048*2, 0, height); //map to the screen height.
 
@@ -77,9 +59,7 @@ void serialEvent (Serial myPort) {
               // increment the horizontal position:
               xPos++;
           }
-          break;
-  
-      case 7:
+          
           parsingStep = 1;
           break;
   

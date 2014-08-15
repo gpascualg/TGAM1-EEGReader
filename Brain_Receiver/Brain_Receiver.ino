@@ -38,7 +38,56 @@ void loop()
 #ifndef VERBOSE_SERIAL
 
     while (bluetooth.available())
-        Serial.write(bluetooth.read());
+    {
+        uint8_t data = bluetooth.read();
+        
+        switch (parsingStep)
+        {
+            case PACKET_SYNC_1:
+            case PACKET_SYNC_2:
+            case PACKET_SYNC_3:
+                if (data == 0xFA + (parsingStep - 1))
+                {
+                    ++parsingStep;
+                }
+                else
+                {
+                    parsingStep = PACKET_SYNC_1;
+                }
+                break;
+
+            case PACKET_BYTES:
+                crc = data;
+                ++parsingStep;
+                break;
+
+            case PACKET_RAW_1:
+                crc += data;
+                rawEEG = (int)(data) << 8;
+                ++parsingStep;
+                break;
+
+            case PACKET_RAW_2:
+                crc += data;
+                rawEEG |= (int)data;
+                ++parsingStep;
+                break;
+
+            case PACKET_CRC:
+                crc = ~crc;
+                if (crc == data)
+                {
+                    Serial.write((uint8_t)(rawEEG >> 8));
+                    Serial.write((uint8_t)(rawEEG & 0xFF));
+                }
+                parsingStep = PACKET_SYNC_1;
+                break;
+
+            default:
+                parsingStep = PACKET_SYNC_1;
+                break;
+        }
+    }
 
 #else
 
