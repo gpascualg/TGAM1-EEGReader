@@ -1,5 +1,8 @@
 import processing.serial.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
 
+FFT fft;
 Serial myPort;        // The serial port
 int xPos = 1;         // horizontal position of the graph 
 

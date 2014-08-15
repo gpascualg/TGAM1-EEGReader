@@ -77,6 +77,8 @@ void loop()
                 crc = ~crc;
                 if (crc == data)
                 {
+                    Serial.write((uint8_t)0xFF);
+                    Serial.write((uint8_t)0xFF);
                     Serial.write((uint8_t)(rawEEG >> 8));
                     Serial.write((uint8_t)(rawEEG & 0xFF));
                 }
