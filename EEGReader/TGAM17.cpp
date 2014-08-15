@@ -13,10 +13,10 @@ namespace TGAM
             stream->begin((unsigned long)initialBaudrate);
             // while(!Serial) // Might be necessary for some arduino boards
 
-			// Change baudrate
-			// Page 6, baudrate selection
-			uint8_t mode = 0x60 | (config.configMode == CONFIG_RAW ? 3 : config.configMode);
-			stream->write((uint8_t)mode);
+            // Change baudrate
+            // Page 6, baudrate selection
+            uint8_t mode = 0x60 | (config.configMode == CONFIG_RAW ? 3 : config.configMode);
+            stream->write((uint8_t)mode);
 			
             // HACK: We should now wait for a complete packet to be received,
             // as to verify everything is still working

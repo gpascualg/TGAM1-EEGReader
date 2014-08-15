@@ -16,8 +16,12 @@ void dataHandler(unsigned char extendedCodeLevel, unsigned char code, unsigned c
     {        
         // Transmission start
         bluetooth.write(0xFA);
-        bluetooth.write(0xFA);
+        bluetooth.write(0xFB);
+        bluetooth.write(0xFC);
 
+        // Set up CRC
+        unsigned char crc = numBytes;
+        
         // Send number of bytes
         bluetooth.write(numBytes);
 
@@ -25,9 +29,14 @@ void dataHandler(unsigned char extendedCodeLevel, unsigned char code, unsigned c
         while (numBytes)
         {
             bluetooth.write(*value);
+            crc += *value;
             ++value;
             --numBytes;
         }
+        
+        // Send CRC
+        crc = ~crc;
+        bluetooth.write(crc);
     }
 }
 
@@ -52,3 +61,4 @@ void loop()
         THINKGEAR_parseByte(&parser, Serial.read());
     }
 }
+
