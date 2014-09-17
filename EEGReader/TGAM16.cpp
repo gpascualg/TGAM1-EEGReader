@@ -36,7 +36,7 @@ namespace TGAM
             // as to verify everything is still working
             delay(2000);
             stream->flush();
-            stream->begin((long)targetBaudrate);
+            stream->begin((unsigned long)targetBaudrate);
             // while(!Serial) // Might be necessary for some arduino boards
 
             // We now can send which raw information we want
