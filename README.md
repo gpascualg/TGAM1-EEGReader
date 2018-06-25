@@ -4,29 +4,29 @@ TGAM1-EEGReader
 Two arduino boards, wirelessly communicating via bluetooth, are able to get EEG waves and data from a TGAM1 powered device
 
 
-#Components
+# Components
 A list of components for both parts is exposed below
 
-##Transmitter (EEG Reader)
+## Transmitter (EEG Reader)
 * Mindflex headset or some other device using a TGAM1 microchip.
 * HC-05 Bluetooth module
 * Arduino board (any)
 
-##Receiver
+## Receiver
 * HC-05 Blueetooth module
 * Arduino board 
  
 _Note that receiver is optional and a PC/laptop with bluetooth would suffy_
 
-#Installation
+# Installation
 There are two steps, first off performing some arduino core modifications.
 
-##Necessary arduino core code modifications
+## Necessary arduino core code modifications
 Arduino lacks of propper object polymorphism along HardwareSerial and SoftwareSerial. Both inherit from Stream, but Stream does *not* support _begin_ (among others), which renders this library completely useless.
 
 In order to solve this, a simple new base class has been added. Using code on [8] and [9] as base, a new class called **_AbstractSerial_** is parent of both Hardware and Software serials.
 
-###Definitions
+### Definitions
 This are just some paths and folder we will use in the step below, search them on your computer.
 
 * ``ARDUINO_HOME`` = The folder where arduino ide/code was installed to
@@ -37,13 +37,13 @@ If you don't know what git, diffs and patchs are, go to *Modifications - Manual*
 
 Otherwise, head up to *Modifications - Patching*
 
-###Modifications - Manual
+### Modifications - Manual
 * Copy ``Modifications/AbstractSerial.h`` to arduino ``CORE_FOLDER``
 * Copy ``Modifications/HardwareSerial.h`` to arduino ``CORE_FOLDER``
 * Copy ``Modifications/SoftwareSerial.h`` to arduino ``LIBRARY_FOLDER/SoftwareSerial``
 
 
-###Modifications - Patching
+### Modifications - Patching
 Excecute on ``ARDUINO_HOME`` via git console: 
 ```
 git apply --ignore-whitespace core_modifications.patch
@@ -58,7 +58,7 @@ Move EEGReader folder to your arduino library folder, as it is a library.
 Use Brain_Receiver and Brain_Transmitter to program your arduinos and start playing around.
 
 
-#Acknowledgements
+# Acknowledgements
 A complete list of sources and articles used to develop the device
 
 * [1] http://frontiernerds.com/brain-hack - Eric Mika's work on Mindflex hacking
@@ -71,7 +71,7 @@ A complete list of sources and articles used to develop the device
 * [8] https://code.google.com/p/arduino/issues/detail?id=570 - Initial AbstractSerial class
 * [9] https://code.google.com/p/arduino/issues/detail?id=60 - Outdated Serial base class
 
-#LICENSE
+# LICENSE
 
 Copyright Guillem Pascual, 2010-2014 Licensed under the GNU Lesser General Public License.
 
